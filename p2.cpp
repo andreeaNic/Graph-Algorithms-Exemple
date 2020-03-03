@@ -10,6 +10,10 @@
 
 using namespace std;
 
+/*
+Problem solved: it is given a matrix with values. The output is the biggest continuos array ( the next node of the array needs to be 
+adiacent to the the current node), of which the biggest difference between the elements of it isn't bigger than k ( a number given to us)
+*/
 const int white = 0;
 const int grey = 1;
 const int black = -1;
@@ -44,6 +48,7 @@ class Task {
 		fin.close();
 
 	}
+//check if the condition is still valid	
 
 	bool checkIfValid(long int value, long int min_value, long int max_value){
 
@@ -59,7 +64,8 @@ class Task {
 		return true;
 	}		
 
-
+//get the adiacent nodes ( in bfs' perspective, these are the current node neighbours)
+	
 	vector<tuple<int, int, long int>> getAdiacentNodes(tuple <int, int, long int> node_curr){
 
 		vector< tuple <int, int, long int> > adiacent_nodes_vect;
@@ -88,7 +94,8 @@ class Task {
 		return adiacent_nodes_vect;
 
 	}
-
+//bfs modified to check only the nodes that are valuable to us
+	
 	int bfs (tuple<int, int, long int> source){
 
 			long int min_value, max_value = get<2> (source);
@@ -103,42 +110,43 @@ class Task {
 
 			while(!q.empty()){
 
-                tuple<int, int, long int> u = q.front();
-                long int value_u = get<2> (u);
+				tuple<int, int, long int> u = q.front();
+				long int value_u = get<2> (u);
 
 
-                if(value_u > max_value){
-               		max_value = value_u;
-               	}else if(value_u < min_value){
-               		min_value = value_u;
-               	}
-                	
-	            vector<tuple<int, int, long int>> adiacent_nodes;
-	            adiacent_nodes = getAdiacentNodes(u);
+				if(value_u > max_value){
+					max_value = value_u;
+				 }else if(value_u < min_value){
+					min_value = value_u;
+				 }
 
-	           	for(tuple<int, int, long int> new_node : adiacent_nodes){
+				    vector<tuple<int, int, long int>> adiacent_nodes;
+				    adiacent_nodes = getAdiacentNodes(u);
 
-	                if(visited[get<0> (new_node)][get<1> (new_node)] == white){
+					for(tuple<int, int, long int> new_node : adiacent_nodes){
 
-					    if(checkIfValid(get<2> (new_node), min_value, max_value)){
-								
-							visited[get<0> (new_node)][get<1> (new_node)] = grey;
-							q.push(new_node);
-		                }
+					if(visited[get<0> (new_node)][get<1> (new_node)] == white){
 
-		            }
+							    if(checkIfValid(get<2> (new_node), min_value, max_value)){
+
+									visited[get<0> (new_node)][get<1> (new_node)] = grey;
+									q.push(new_node);
+						}
+
+					    }
+						}
+
+
+				    visited[get<0>(u)][get<1> (u)] = black; 
+				    q.pop();
+
+				    area = area + 1;
 				}
-
-
-	            visited[get<0>(u)][get<1> (u)] = black; 
-	            q.pop();
-
-	            area = area + 1;
-        	}
 
 		return area;
 	}		 
 
+	//to get the solution, we apply the bfs on every element of the matrix
 	int get_result() {
 
 		int maxim_array = 0;
@@ -157,7 +165,7 @@ class Task {
 				} 
 			}
 		} 
-		
+		// we return only the lenght of the array
 		return maxim_array;
 
 	}
@@ -165,8 +173,7 @@ class Task {
 	void print_output(int result) {
 
 		ofstream fout("p2.out");
-        //fout 
-        fout<< result << '\n';
+        	fout<< result << '\n';
 		fout.close(); 
 		
 	}  
